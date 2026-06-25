@@ -11,20 +11,19 @@ import lombok.Data;
 @ContentRowHeight(25)
 @HeadRowHeight(30)
 public class TestCaseRecord {
-
     @ExcelProperty("TC_ID")
     @ColumnWidth(18)
-    @GherkinMap(sourceKey = "TC_ID", required = true) // <-- WAJIB ADA
+    @GherkinMap(sourceKey = "TC_ID", required = true)
     private String tcId;
 
     @ExcelProperty("Feature")
     @ColumnWidth(30)
-    @GherkinMap(sourceKey = "FEATURE_NAME", required = true) // <-- WAJIB ADA
+    @GherkinMap(sourceKey = "FEATURE_NAME", required = true)
     private String feature;
 
     @ExcelProperty("Type")
     @ColumnWidth(12)
-    @GherkinMap(sourceKey = "TAG_TYPE") // Default-nya false (Opsional)
+    @GherkinMap(sourceKey = "TAG_TYPE")
     private String type;
 
     @ExcelProperty("Priority")
@@ -39,7 +38,7 @@ public class TestCaseRecord {
 
     @ExcelProperty("Title")
     @ColumnWidth(45)
-    @GherkinMap(sourceKey = "SCENARIO_NAME", required = true) // <-- WAJIB ADA
+    @GherkinMap(sourceKey = "SCENARIO_NAME", required = true)
     private String title;
 
     @ExcelProperty("Precondition (Given)")

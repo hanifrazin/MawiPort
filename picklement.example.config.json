@@ -1,0 +1,19 @@
+{
+  "excelMetadata": {
+    "author": "QA Automation Team",
+    "defaultSheetName": "Picklement Master Report"
+  },
+  "tcIdStrategy": {
+    "prefix": "TC",
+    "padding": 3
+  },
+  "tagRouting": {
+    "typeKeywords": ["API", "WEB", "MOBILE", "UI", "BACKEND"],
+    "priorityKeywords": ["P0", "P1", "P2", "P3", "HIGH", "MEDIUM", "LOW", "BLOCKER"]
+  },
+  "stepKeywords": {
+    "given": ["Given", "Diketahui", "And"],
+    "when": ["When", "Ketika", "And"],
+    "then": ["Then", "Maka", "And"]
+  }
+}

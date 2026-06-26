@@ -1,9 +1,9 @@
-package com.picklement.cli;
+package com.krai.cli;
 
-import com.picklement.adapter.input.GherkinAstAdapter;
-import com.picklement.adapter.output.FastExcelAdapter;
-import com.picklement.core.engine.ReflectionMapper;
-import com.picklement.core.model.TestCaseRecord;
+import com.krai.adapter.input.GherkinAstAdapter;
+import com.krai.adapter.output.FastExcelAdapter;
+import com.krai.core.engine.ReflectionMapper;
+import com.krai.core.model.TestCaseRecord;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-@Command(name = "picklement", mixinStandardHelpOptions = true, version = "1.0",
+@Command(name = "krai", mixinStandardHelpOptions = true, version = "1.0",
         description = "🥒 Transforms Gherkin .feature files into structured Excel reports.")
-public class PicklementApp implements Callable<Integer> {
+public class KraiApp implements Callable<Integer> {
 
     @Option(names = {"-i", "--input"}, description = "Path to the .feature file", required = true)
     private Path inputPath;
@@ -26,7 +26,7 @@ public class PicklementApp implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        System.out.println("🥒 Picklement Engine Starting...");
+        System.out.println("🥒 Krai Engine Starting...");
 
         // 1. Initialize Components
         GherkinAstAdapter reader = new GherkinAstAdapter();
@@ -56,7 +56,7 @@ public class PicklementApp implements Callable<Integer> {
     }
 
     public static void main(String[] args) {
-        int exitCode = new CommandLine(new PicklementApp()).execute(args);
+        int exitCode = new CommandLine(new KraiApp()).execute(args);
         System.exit(exitCode);
     }
 }

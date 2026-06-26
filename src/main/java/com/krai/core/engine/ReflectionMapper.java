@@ -1,7 +1,7 @@
-package com.picklement.core.engine;
+package com.krai.core.engine;
 
-import com.picklement.core.annotation.GherkinMap;
-import com.picklement.core.model.TestCaseRecord;
+import com.krai.core.annotation.GherkinMap;
+import com.krai.core.model.TestCaseRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;

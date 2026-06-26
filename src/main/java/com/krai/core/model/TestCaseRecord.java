@@ -1,10 +1,10 @@
-package com.picklement.core.model;
+package com.krai.core.model;
 
 import cn.idev.excel.annotation.ExcelProperty;
 import cn.idev.excel.annotation.write.style.ColumnWidth;
 import cn.idev.excel.annotation.write.style.ContentRowHeight;
 import cn.idev.excel.annotation.write.style.HeadRowHeight;
-import com.picklement.core.annotation.GherkinMap;
+import com.krai.core.annotation.GherkinMap;
 import lombok.Data;
 
 @Data

@@ -38,7 +38,7 @@ Feature: Login Module
 Your Java object uses `@GherkinMap` to specify which Gherkin data element maps to which field.
 
 ```java
-import com.picklement.core.annotation.GherkinMap;
+import com.krai.core.annotation.GherkinMap;
 import lombok.Data;
 
 @Data

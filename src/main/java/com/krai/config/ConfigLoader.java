@@ -1,4 +1,4 @@
-package com.picklement.config;
+package com.krai.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

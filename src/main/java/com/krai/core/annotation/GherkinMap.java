@@ -1,4 +1,6 @@
-package com.picklement.core.annotation;
+package com.krai.core.annotation;
+
+import com.krai.core.engine.ReflectionMapper;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -17,7 +19,7 @@ import java.lang.annotation.Target;
  * private String testName;
  * </pre>
  *
- * @see com.picklement.core.engine.ReflectionMapper
+ * @see ReflectionMapper
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

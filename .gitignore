@@ -46,7 +46,7 @@ test-output/
 logs/
 
 # Abaikan config lokal yang mungkin berisi path absolut laptop Anda
-picklement.config.json
+krai.config.json
 .env
 .env.local
 

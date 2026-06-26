@@ -1,6 +1,6 @@
-package com.picklement.adapter.input;
+package com.krai.adapter.input;
 
-import com.picklement.port.input.FeatureFileReader;
+import com.krai.port.input.FeatureFileReader;
 import io.cucumber.gherkin.GherkinParser;
 import io.cucumber.messages.IdGenerator;
 import io.cucumber.messages.types.*;

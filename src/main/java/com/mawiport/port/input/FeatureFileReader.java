@@ -1,4 +1,4 @@
-package com.krai.port.input;
+package com.mawiport.port.input;
 
 import java.io.IOException;
 import java.nio.file.Path;

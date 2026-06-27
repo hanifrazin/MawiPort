@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.krai</groupId>
-    <artifactId>krai</artifactId>
+    <groupId>com.mawiport</groupId>
+    <artifactId>mawiport</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Krai</name>
+    <name>MawiPort</name>
     <description>The Ultimate Gherkin to Sheet</description>
 
     <properties>
@@ -35,35 +35,34 @@
             <version>${cucumber.gherkin.version}</version>
         </dependency>
 
-        <!-- Cucumber Messages (Wajib untuk tipe data AST) -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>messages</artifactId>
             <version>${cucumber.messages.version}</version>
         </dependency>
 
-        <!-- 2. FastExcel (The True Successor of EasyExcel, CVE Free) -->
+        <!-- 2. FastExcel -->
         <dependency>
             <groupId>cn.idev.excel</groupId>
             <artifactId>fastexcel</artifactId>
             <version>${fastexcel.version}</version>
         </dependency>
 
-        <!-- 3. Jackson (JSON Config Loader - Locked at safest 2.x version) -->
+        <!-- 3. Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
 
-        <!-- 4. Picocli (CLI Framework) -->
+        <!-- 4. Picocli -->
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
             <version>${picocli.version}</version>
         </dependency>
 
-        <!-- 5. Lombok (Boilerplate Reducer) -->
+        <!-- 5. Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -71,21 +70,19 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- 6. Logging (SLF4J Simple) -->
+        <!-- 6. Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
 
-        <!-- Penerjemah Log4j -> SLF4J (Agar FastExcel tidak protes) -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-to-slf4j</artifactId>
             <version>2.24.3</version>
         </dependency>
 
-        <!-- Paksa SLF4J API naik ke versi 2.0.17 (Menimpa versi 1.7 bawaan POI) -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -113,7 +110,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Shade Plugin untuk membuat Fat JAR (featurepress.jar) -->
+            <!-- Shade Plugin untuk membuat Fat JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -126,16 +123,11 @@
                         </goals>
                         <configuration>
                             <transformers>
-                                <!-- 1. GABUNGKAN file SPI (Wajib untuk FastExcel/POI agar tidak error) -->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-
-                                <!-- 2. Tentukan Main-Class (Sang Komandan) -->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.krai.cli.KraiApp</mainClass>
+                                    <mainClass>com.mawiport.cli.MawiPortApp</mainClass>
                                 </transformer>
                             </transformers>
-
-                            <!-- 3. FILTER / BUANG file sampah penyebab Warning -->
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -147,43 +139,106 @@
                                     </excludes>
                                 </filter>
                             </filters>
-
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- 🚀 APPASSEMBLER PLUGIN (STRATEGI 1) -->
+            <!-- Otomatis membuat folder bin/ berisi mawi.bat (Windows) dan mawi (Mac/Linux) -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>2.1.0</version>
+                <configuration>
+                    <programs>
+                        <program>
+                            <mainClass>com.mawiport.cli.MawiPortApp</mainClass>
+                            <id>mawi</id> <!-- Nama command yang akan dipanggil -->
+                        </program>
+                    </programs>
+                    <!-- Suntikan Headless Mode agar tidak ada Ghost App di Mac -->
+                    <extraJvmArguments>-Djava.awt.headless=true</extraJvmArguments>
+                    <!-- Gunakan wildcard classpath agar script lebih pendek dan rapi -->
+                    <useWildcardClassPath>true</useWildcardClassPath>
+                    <repositoryLayout>flat</repositoryLayout>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 🤖 ROBOT KURIR: Memindahkan script dari src/main/scripts ke target/release -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>create-release-package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- 1. Bersihkan & Buat folder release -->
+                                <delete dir="${project.build.directory}/release"/>
+                                <mkdir dir="${project.build.directory}/release"/>
+
+                                <!-- 2. Copy JAR & Ganti Nama -->
+                                <copy file="${project.build.directory}/${project.build.finalName}.jar"
+                                      tofile="${project.build.directory}/release/mawiport.jar"/>
+
+                                <!-- 3. Copy Semua Script dari src/main/scripts -->
+                                <copy todir="${project.build.directory}/release/">
+                                    <fileset dir="${project.basedir}/src/main/scripts"/>
+                                </copy>
+
+                                <!-- 4. Beri izin eksekusi untuk file Mac/Linux -->
+                                <chmod perm="755">
+                                    <fileset dir="${project.build.directory}/release/">
+                                        <include name="mawi"/>
+                                        <include name="install.sh"/>
+                                    </fileset>
+                                </chmod>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
-    <!-- Tambahkan blok ini di bawah <build> atau sebelum </project> -->
     <dependencyManagement>
         <dependencies>
-            <!-- Memaksa jackson-core ke versi yang lebih baru jika scanner masih rewel -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
                 <version>2.18.8</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
                 <version>5.4.0</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
                 <version>1.26.1</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.20.0</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 

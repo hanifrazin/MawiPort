@@ -1,0 +1,6 @@
+# Paksa file shell script pakai LF (Mac/Linux)
+*.sh text eol=lf
+mawi text eol=lf
+
+# Paksa file batch pakai CRLF (Windows)
+*.bat text eol=crlf

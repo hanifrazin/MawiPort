@@ -1,4 +1,4 @@
-package com.krai.config;
+package com.mawiport.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;

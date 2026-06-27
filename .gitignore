@@ -46,7 +46,7 @@ test-output/
 logs/
 
 # Abaikan config lokal yang mungkin berisi path absolut laptop Anda
-krai.config.json
+mawiport.config.json
 .env
 .env.local
 

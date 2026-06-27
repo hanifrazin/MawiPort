@@ -1,6 +1,6 @@
-package com.krai.core.annotation;
+package com.mawiport.core.annotation;
 
-import com.krai.core.engine.ReflectionMapper;
+import com.mawiport.core.engine.ReflectionMapper;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

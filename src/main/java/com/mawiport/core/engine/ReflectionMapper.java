@@ -1,7 +1,7 @@
-package com.krai.core.engine;
+package com.mawiport.core.engine;
 
-import com.krai.core.annotation.GherkinMap;
-import com.krai.core.model.TestCaseRecord;
+import com.mawiport.core.annotation.GherkinMap;
+import com.mawiport.core.model.TestCaseRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;

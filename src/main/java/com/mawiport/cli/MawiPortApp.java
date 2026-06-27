@@ -1,9 +1,9 @@
-package com.krai.cli;
+package com.mawiport.cli;
 
-import com.krai.adapter.input.GherkinAstAdapter;
-import com.krai.adapter.output.FastExcelAdapter;
-import com.krai.core.engine.ReflectionMapper;
-import com.krai.core.model.TestCaseRecord;
+import com.mawiport.adapter.input.GherkinAstAdapter;
+import com.mawiport.adapter.output.FastExcelAdapter;
+import com.mawiport.core.engine.ReflectionMapper;
+import com.mawiport.core.model.TestCaseRecord;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-@Command(name = "krai", mixinStandardHelpOptions = true, version = "1.0",
+@Command(name = "mawiport", mixinStandardHelpOptions = true, version = "1.0",
         description = "🥒 Transforms Gherkin .feature files into structured Excel reports.")
-public class KraiApp implements Callable<Integer> {
+public class MawiPortApp implements Callable<Integer> {
 
     @Option(names = {"-i", "--input"}, description = "Path to the .feature file", required = true)
     private Path inputPath;
@@ -26,7 +26,7 @@ public class KraiApp implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        System.out.println("🥒 Krai Engine Starting...");
+        System.out.println("🥒 MawiPort Engine Starting...");
 
         // 1. Initialize Components
         GherkinAstAdapter reader = new GherkinAstAdapter();
@@ -56,7 +56,8 @@ public class KraiApp implements Callable<Integer> {
     }
 
     public static void main(String[] args) {
-        int exitCode = new CommandLine(new KraiApp()).execute(args);
+        System.setProperty("java.awt.headless", "true");
+        int exitCode = new CommandLine(new MawiPortApp()).execute(args);
         System.exit(exitCode);
     }
 }

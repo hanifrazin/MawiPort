@@ -1,7 +1,7 @@
 {
   "excelMetadata": {
     "author": "QA Automation Team",
-    "defaultSheetName": "Picklement Master Report"
+    "defaultSheetName": "Master Report"
   },
   "tcIdStrategy": {
     "prefix": "TC",

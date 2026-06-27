@@ -9,11 +9,12 @@
   },
   "tagRouting": {
     "typeKeywords": ["API", "WEB", "MOBILE", "UI", "BACKEND"],
-    "priorityKeywords": ["P0", "P1", "P2", "P3", "HIGH", "MEDIUM", "LOW", "BLOCKER"]
+    "priorityKeywords": ["P0", "P1", "P2", "P3", "CRITICAL", "HIGH", "MEDIUM", "LOW"],
+    "severityKeywords" : ["S1", "S2", "S3", "S4", "CRITICAL", "MAJOR", "MODERATE", "LOW"]
   },
   "stepKeywords": {
-    "given": ["Given", "Diketahui", "And"],
-    "when": ["When", "Ketika", "And"],
-    "then": ["Then", "Maka", "And"]
+    "given": ["Given", "And", "But"],
+    "when": ["When", "And", "But"],
+    "then": ["Then", "And", "But"]
   }
 }

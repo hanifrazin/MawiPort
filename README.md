@@ -1,4 +1,4 @@
-# 🦎 MawiPort
+# <img src="logo.png" width="20" valign="middle" alt="MawiPort Logo"> MawiPort
 **The Ultimate Gherkin to Excel Converter**
 
 MawiPort is a simple and powerful command-line interface (CLI) tool that instantly converts your Cucumber Gherkin (`.feature`) files into beautifully formatted Excel (`.xlsx`) reports. It's designed for Quality Assurance teams, Business Analysts, and anyone who needs to bridge the gap between technical test scenarios and business-friendly documentation.
@@ -53,11 +53,52 @@ Now that the release files are generated, you can install the `mawi` command to 
 3.  **Restart Your Terminal**: This is a crucial step! Close and reopen your Command Prompt, PowerShell, or Terminal window for the changes to take effect.
 4.  **Verify the installation**: You're all set! Check that the command is working by typing:
     ```bash
-    mawi --version
+    mawi
     ```
 
 > 💡 **Pro Tip for Distribution:**
 > Want to share this tool with your team without asking them to run a Maven build? Just **zip the entire `target/release/` folder** and send them the `.zip` file. They can extract it and run the `install.bat` or `install.sh` script directly.
+
+### Alternative: Manual Setup (Advanced / Fallback)
+If you prefer not to use the `install.sh` / `install.bat` script, or if it fails due to system permissions, you can manually register MawiPort to your system's PATH. This is exactly what the installer scripts do behind the scenes.
+
+**For macOS / Linux Users:**
+1. **Get your absolute path**: Navigate to your extracted `target/release` folder and type `pwd`. Copy the output (e.g., `/Users/username/IdeaProjects/MawiPort/target/release`).
+2. **Open your shell configuration file** using the `nano` text editor:
+   ```bash
+   nano ~/.zshrc   # For macOS (Zsh)
+   # OR
+   nano ~/.bashrc  # For Linux (Bash)
+   ```
+3. **Add the path variable**: Scroll to the bottom of the file and add the following line (replace the example path with the one you copied in step 1):
+   ```bash
+   export PATH="$PATH:/Users/username/IdeaProjects/MawiPort/target/release"
+   ```
+   *Press `Ctrl+O` then `Enter` to save, and `Ctrl+X` to exit nano.*
+4. **Apply the changes**: Refresh your current terminal session:
+   ```bash
+   source ~/.zshrc   # For Zsh
+   # OR
+   source ~/.bashrc  # For Bash
+   ```
+5. **Verify permissions**: Check if the scripts are executable:
+   ```bash
+   ls -l /Users/username/IdeaProjects/MawiPort/target/release/mawi
+   ls -l /Users/username/IdeaProjects/MawiPort/target/release/install.sh
+   ```
+   If they lack execution permissions (indicated by `-rw-r--r--`), run:
+   ```bash
+   chmod +x /Users/username/IdeaProjects/MawiPort/target/release/mawi
+   chmod +x /Users/username/IdeaProjects/MawiPort/target/release/install.sh
+   ```
+
+**For Windows Users:**
+1. Open the Start Search, type in **"env"**, and select **"Edit the system environment variables"**.
+2. Click the **"Environment Variables..."** button.
+3. Under **"User variables"**, select the **"Path"** variable and click **"Edit..."**.
+4. Click **"New"** and paste the absolute path to your `target\release` folder (e.g., `C:\Users\username\IdeaProjects\MawiPort\target\release`).
+5. Click **"OK"** on all windows to save.
+6. Restart your terminal (Command Prompt or PowerShell).
 
 ## 🚀 Quick Start & Usage
 Using MawiPort is incredibly straightforward. The basic command requires an input file (`-i`) and an output file (`-o`).
@@ -78,3 +119,40 @@ mawi -i login-scenario.feature -o test-case-report.xlsx
 ```bash
 mawi -i ./gherkin-files/checkout.feature -o ./excel-reports/TC_Checkout.xlsx
 ```
+
+## 🛠️ Troubleshooting & FAQ
+
+### 🏗️ Build & Project Issues (For Developers)
+If you encounter problems during the `mvn clean package` step or the `target/release/` folder is not generated, check these common issues:
+
+**Problem 1: `mvn: command not found`**
+- **Cause:** Apache Maven is not installed or not added to your system's PATH.
+- **Solution:** Download and install Maven from [maven.apache.org](https://maven.apache.org/), or use a package manager like `brew install maven` (macOS) or `choco install maven` (Windows).
+
+**Problem 2: `java: command not found` or `Unsupported class file major version`**
+- **Cause:** Java is not installed, or you are using an older version (Java 8, 11, or 17). MawiPort requires **Java 21 or higher**.
+- **Solution:** 
+  - Check your version: `java --version`
+  - If it's below 21, download JDK 21 from [Adoptium](https://adoptium.net/) or install via `brew install openjdk@21`.
+  - Ensure your `JAVA_HOME` environment variable points to the JDK 21 installation.
+
+**Problem 3: `target/release/` folder is missing after `mvn clean package`**
+- **Cause:** The Maven build failed silently, or the `maven-antrun-plugin` did not execute properly.
+- **Solution:** 
+  - Scroll up in your terminal and look for `[ERROR]` messages.
+  - Ensure your `pom.xml` contains the `maven-antrun-plugin` configuration.
+  - Try running `mvn clean package -X` (debug mode) to see detailed logs.
+
+**Problem 4: `Compilation failure: invalid target release: 21`**
+- **Cause:** Your IDE or terminal is using a different JDK version than the one required by the project.
+- **Solution:** In IntelliJ, go to `File > Project Structure > Project SDK` and ensure it is set to JDK 21. Also check `Settings > Build > Compiler > Java Compiler` to ensure the target bytecode version is 21.
+
+---
+
+### 🍎 For macOS / Linux Users
+**Problem:** You get the error `zsh: command not found: mawi` or `bash: ./mawi: Permission denied` even though you ran `install.sh` or are inside the release folder.
+
+**Solution:** You need to grant execution permissions to the scripts. Run this command in your terminal:
+```bash
+chmod +x mawi
+chmod +x install.sh

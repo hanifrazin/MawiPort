@@ -1,53 +1,61 @@
 package com.mawiport.core.engine;
 
 import com.mawiport.core.annotation.GherkinMap;
-import com.mawiport.core.model.TestCaseRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.HashMap;
+import java.lang.reflect.Modifier;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-public final class ReflectionMapper {
-    private static final Logger LOG = LoggerFactory.getLogger(ReflectionMapper.class);
-    private final Map<String, Field> sourceKeyToTargetField;
+public class ReflectionMapper {
+    private final Map<String, Field> fieldMap;
 
-    public ReflectionMapper() {
-        this.sourceKeyToTargetField = Collections.unmodifiableMap(initializeSourceKeyMapping());
+    public ReflectionMapper(Class<?> clazz) {
+        this.fieldMap = createFieldMap(clazz);
     }
 
-    public void mapData(TestCaseRecord target, Map<String, Object> gherkinData) {
-        if (target == null || gherkinData == null) return;
-        for (Map.Entry<String, Field> entry : sourceKeyToTargetField.entrySet()) {
-            String sourceKey = entry.getKey();
-            Field targetField = entry.getValue();
-            Object value = gherkinData.get(sourceKey);
+    private Map<String, Field> createFieldMap(Class<?> clazz) {
+        Map<String, Field> map = new LinkedHashMap<>();
+        Field[] fields = clazz.getDeclaredFields();
 
-            if (value != null && !value.toString().trim().isEmpty()) {
+        for (Field field : fields) {
+            // Security: Only make accessible if it's a safe operation
+            if (Modifier.isPrivate(field.getModifiers())) {
                 try {
-                    targetField.setAccessible(true);
-                    targetField.set(target, value.toString());
-                } catch (IllegalAccessException e) {
-                    LOG.error("Failed to set field '{}'", targetField.getName(), e);
+                    field.setAccessible(true); // Make private fields accessible
+                } catch (SecurityException e) {
+                    System.err.println("Warning: Cannot access private field " + field.getName() + ": " + e.getMessage());
+                    continue; // Skip this field if access is denied
                 }
-            } else if (isRequired(targetField)) {
-                LOG.warn("⚠️ Required property '{}' is missing for TC: {}", sourceKey, target.getTcId());
             }
+            map.put(field.getName(), field);
         }
-    }
 
-    private Map<String, Field> initializeSourceKeyMapping() {
-        Map<String, Field> map = new HashMap<>();
-        for (Field f : TestCaseRecord.class.getDeclaredFields()) {
-            GherkinMap ann = f.getAnnotation(GherkinMap.class);
-            if (ann != null) map.put(ann.sourceKey(), f);
-        }
         return map;
     }
 
-    private boolean isRequired(Field f) {
-        GherkinMap ann = f.getAnnotation(GherkinMap.class);
-        return ann != null && ann.required();
+    public Map<String, Field> getFieldMap() {
+        return new LinkedHashMap<>(fieldMap); // Return a copy to maintain immutability
+    }
+
+    public void mapData(Object target, Map<String, Object> data) throws IllegalAccessException {
+        Map<String, Field> fieldMap = getFieldMap();
+        for (Map.Entry<String, Field> entry : fieldMap.entrySet()) {
+            Field field = entry.getValue();
+            
+            // Check for GherkinMap annotation
+            GherkinMap annotation = field.getAnnotation(GherkinMap.class);
+            String sourceKey = field.getName(); // Default to field name
+            
+            if (annotation != null && !annotation.sourceKey().isEmpty()) {
+                sourceKey = annotation.sourceKey();
+            }
+            
+            if (data.containsKey(sourceKey)) {
+                Object value = data.get(sourceKey);
+                if (value != null) {
+                    field.set(target, value.toString()); // Convert to String to be safe
+                }
+            }
+        }
     }
 }

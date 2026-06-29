@@ -32,8 +32,14 @@ public class ConfigLoader {
                 new AppConfig.ExcelMetadata("QA Team", "Picklement Report"),
                 new AppConfig.TcIdStrategy("TC", 3),
                 new AppConfig.TagRouting(
-                        java.util.List.of("API", "WEB", "MOBILE"),
-                        java.util.List.of("P0", "P1", "HIGH", "MEDIUM")
+                        java.util.List.of("API", "web", "android", "ios", "desktop", "table", "phone"),
+                        java.util.List.of("P0", "P1", "P2", "P3"),
+                        java.util.List.of("S1", "S2", "S3", "S4"),
+                        java.util.List.of("smoke", "regression", "sanity", "integration", "security", "performance"),
+                        java.util.List.of("UAT", "SIT"),
+                        java.util.List.of("dev", "staging", "prod", "pre-prod"),
+                        java.util.List.of("manual", "automation", "combine"),
+                        java.util.List.of("positive", "negative")
                 ),
                 new AppConfig.StepKeywords(
                         java.util.List.of("Given"),

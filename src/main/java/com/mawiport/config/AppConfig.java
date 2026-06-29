@@ -15,6 +15,15 @@ public record AppConfig(
 ) {
     public record ExcelMetadata(String author, String defaultSheetName) {}
     public record TcIdStrategy(String prefix, int padding) {}
-    public record TagRouting(List<String> typeKeywords, List<String> priorityKeywords) {}
+    public record TagRouting(
+            List<String> platformKeywords,
+            List<String> priorityKeywords,
+            List<String> severityKeywords,
+            List<String> typeKeywords,
+            List<String> phaseKeywords,
+            List<String> environmentKeywords,
+            List<String> executeKeywords,
+            List<String> validCaseKeywords
+    ) {}
     public record StepKeywords(List<String> given, List<String> when, List<String> then) {}
 }

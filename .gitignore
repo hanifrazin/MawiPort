@@ -26,6 +26,7 @@ out/
 .classpath
 .project
 .settings/
+.proxyai
 
 # VS Code
 .vscode/

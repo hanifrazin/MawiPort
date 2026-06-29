@@ -127,31 +127,117 @@ public class GherkinAstAdapter implements FeatureFileReader {
         map.put("THEN_STEPS", String.join("\n", thens));
         map.put("TEST_DATA", String.join("\n", testData));
 
-        // 6. Extract Tags
-        List<Tag> allTags = new ArrayList<>(featureTags);
-        allTags.addAll(scenario.getTags());
+        // 6. Extract Tags with proper inheritance logic
+        
+        // PLATFORM: scenario overrides feature
+        String finalPlatform = extractTag(scenario.getTags(), "API", "web", "android", "ios", "desktop", "table", "phone");
+        if (finalPlatform == null) finalPlatform = extractTag(featureTags, "API", "web", "android", "ios", "desktop", "table", "phone");
+        if (finalPlatform != null) map.put("TAG_PLATFORM", finalPlatform);
+        
+        // PRIORITY: scenario overrides feature
+        String finalPriority = extractTag(scenario.getTags(), "P0", "P1", "P2", "P3", "HIGH", "MEDIUM", "LOW");
+        if (finalPriority == null) finalPriority = extractTag(featureTags, "P0", "P1", "P2", "P3", "HIGH", "MEDIUM", "LOW");
+        if (finalPriority != null) map.put("TAG_PRIORITY", finalPriority);
+        
+        // SEVERITY: scenario overrides feature
+        String finalSeverity = extractTag(scenario.getTags(), "S1", "S2", "S3", "S4", "CRITICAL", "MAJOR", "MODERATE", "LOW");
+        if (finalSeverity == null) finalSeverity = extractTag(featureTags, "S1", "S2", "S3", "S4", "CRITICAL", "MAJOR", "MODERATE", "LOW");
+        if (finalSeverity != null) map.put("TAG_SEVERITY", finalSeverity);
+        
+        // TYPE: scenario overrides feature
+        String finalType = extractTag(scenario.getTags(), "smoke", "regression", "sanity", "integration", "security", "performance");
+        if (finalType == null) finalType = extractTag(featureTags, "smoke", "regression", "sanity", "integration", "security", "performance");
+        if (finalType != null) map.put("TAG_TYPE", finalType);
+        
+        // PHASE: scenario overrides feature
+        String finalPhase = extractTag(scenario.getTags(), "UAT", "SIT");
+        if (finalPhase == null) finalPhase = extractTag(featureTags, "UAT", "SIT");
+        if (finalPhase != null) map.put("TAG_PHASE", finalPhase);
+        
+        // ENVIRONMENT: scenario overrides feature
+        String finalEnvironment = extractTag(scenario.getTags(), "dev", "staging", "prod", "pre-prod");
+        if (finalEnvironment == null) finalEnvironment = extractTag(featureTags, "dev", "staging", "prod", "pre-prod");
+        if (finalEnvironment != null) map.put("TAG_ENVIRONMENT", finalEnvironment);
+        
+        // EXECUTE: scenario overrides feature
+        String finalExecute = extractTag(scenario.getTags(), "manual", "automation", "combine");
+        if (finalExecute == null) finalExecute = extractTag(featureTags, "manual", "automation", "combine");
+        if (finalExecute != null) map.put("TAG_EXECUTE", finalExecute);
+        
+        // VALID: scenario overrides feature
+        String finalValid = extractTag(scenario.getTags(), "positive", "negative");
+        if (finalValid == null) finalValid = extractTag(featureTags, "positive", "negative");
+        if (finalValid != null) map.put("TAG_VALID", finalValid);
 
-        map.put("TAG_TYPE", extractTag(allTags, "API", "WEB", "MOBILE"));
-        map.put("TAG_PRIORITY", extractTag(allTags, "P0", "P1", "HIGH", "MEDIUM", "LOW"));
-
-        List<String> otherTags = allTags.stream()
-                .map(t -> t.getName().replace("@", ""))
-                .filter(t -> !t.equalsIgnoreCase("API") && !t.equalsIgnoreCase("WEB") && !t.equalsIgnoreCase("P0") && !t.equalsIgnoreCase("P1"))
-                .toList();
-
-        if (!otherTags.isEmpty()) map.put("TAG_1", otherTags.get(0));
-        if (otherTags.size() > 1) map.put("TAG_2", otherTags.get(1));
+        // For TAG_1 and TAG_2, use scenario tags first, then fall back to feature tags
+        // Exclude all categorized tags
+        List<String> scenarioOtherTags = new ArrayList<>();
+        for (Tag tag : scenario.getTags()) {
+            String tagName = tag.getName().replace("@", "");
+            String lowerTagName = tagName.toLowerCase();
+            if (!lowerTagName.equals("api") && !lowerTagName.equals("web") && 
+                !lowerTagName.equals("android") && !lowerTagName.equals("ios") && 
+                !lowerTagName.equals("desktop") && !lowerTagName.equals("table") && 
+                !lowerTagName.equals("phone") && 
+                !lowerTagName.equals("p0") && !lowerTagName.equals("p1") && 
+                !lowerTagName.equals("p2") && !lowerTagName.equals("p3") && 
+                !lowerTagName.equals("s1") && !lowerTagName.equals("s2") && 
+                !lowerTagName.equals("s3") && !lowerTagName.equals("s4") && 
+                !lowerTagName.equals("smoke") && !lowerTagName.equals("regression") && 
+                !lowerTagName.equals("sanity") && !lowerTagName.equals("integration") && 
+                !lowerTagName.equals("security") && !lowerTagName.equals("performance") && 
+                !lowerTagName.equals("uat") && !lowerTagName.equals("sit") && 
+                !lowerTagName.equals("dev") && !lowerTagName.equals("staging") && 
+                !lowerTagName.equals("prod") && !lowerTagName.equals("pre-prod") && 
+                !lowerTagName.equals("manual") && !lowerTagName.equals("automation") && 
+                !lowerTagName.equals("combine") && 
+                !lowerTagName.equals("positive") && !lowerTagName.equals("negative")) {
+                scenarioOtherTags.add(tagName);
+            }
+        }
+        
+        List<String> finalOtherTags = new ArrayList<>();
+        if (!scenarioOtherTags.isEmpty()) {
+            finalOtherTags.addAll(scenarioOtherTags);
+        } else {
+            for (Tag tag : featureTags) {
+                String tagName = tag.getName().replace("@", "");
+                String lowerTagName = tagName.toLowerCase();
+                if (!lowerTagName.equals("api") && !lowerTagName.equals("web") && 
+                    !lowerTagName.equals("android") && !lowerTagName.equals("ios") && 
+                    !lowerTagName.equals("desktop") && !lowerTagName.equals("table") && 
+                    !lowerTagName.equals("phone") && 
+                    !lowerTagName.equals("p0") && !lowerTagName.equals("p1") && 
+                    !lowerTagName.equals("p2") && !lowerTagName.equals("p3") && 
+                    !lowerTagName.equals("s1") && !lowerTagName.equals("s2") && 
+                    !lowerTagName.equals("s3") && !lowerTagName.equals("s4") && 
+                    !lowerTagName.equals("smoke") && !lowerTagName.equals("regression") && 
+                    !lowerTagName.equals("sanity") && !lowerTagName.equals("integration") && 
+                    !lowerTagName.equals("security") && !lowerTagName.equals("performance") && 
+                    !lowerTagName.equals("uat") && !lowerTagName.equals("sit") && 
+                    !lowerTagName.equals("dev") && !lowerTagName.equals("staging") && 
+                    !lowerTagName.equals("prod") && !lowerTagName.equals("pre-prod") && 
+                    !lowerTagName.equals("manual") && !lowerTagName.equals("automation") && 
+                    !lowerTagName.equals("combine") && 
+                    !lowerTagName.equals("positive") && !lowerTagName.equals("negative")) {
+                    finalOtherTags.add(tagName);
+                }
+            }
+        }
+        
+        if (!finalOtherTags.isEmpty()) map.put("TAG_1", finalOtherTags.get(0));
+        if (finalOtherTags.size() > 1) map.put("TAG_2", finalOtherTags.get(1));
 
         return map;
     }
 
     private String extractTag(List<Tag> tags, String... keywords) {
         for (Tag tag : tags) {
-            String name = tag.getName().replace("@", "").toUpperCase();
+            String name = tag.getName().replace("@", "");
             for (String kw : keywords) {
-                if (name.contains(kw)) return name;
+                if (name.equalsIgnoreCase(kw)) return name;
             }
         }
-        return "";
+        return null;
     }
 }

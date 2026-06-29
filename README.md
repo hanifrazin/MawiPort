@@ -9,6 +9,8 @@ MawiPort is a simple and powerful command-line interface (CLI) tool that instant
 - **Cross-Platform**: Works seamlessly on Windows, macOS, and Linux.
 - **Zero Dependencies (for Native version)**: The pre-built executable requires no other installations (not even Java!).
 - **Easy to Share**: Once built, the entire tool can be zipped and shared with teammates.
+- **Smart Tag Inheritance**: Feature-level tags are automatically inherited by all scenarios, with scenario-level tags overriding when needed.
+- **Comprehensive Tag Support**: Supports priority, severity, type, and custom tags with intelligent categorization.
 
 ## 📋 Prerequisites
 Your system requirements depend on which version of MawiPort you intend to use after building it.
@@ -118,6 +120,76 @@ mawi -i login-scenario.feature -o test-case-report.xlsx
 **2. Specifying paths in different folders:**
 ```bash
 mawi -i ./gherkin-files/checkout.feature -o ./excel-reports/TC_Checkout.xlsx
+```
+
+## 🏷️ Tag Inheritance System
+MawiPort features a powerful tag inheritance system that makes test organization effortless:
+
+### How It Works
+- **Feature-Level Tags**: Tags placed on the Feature line are inherited by all scenarios
+- **Scenario-Level Overrides**: Scenarios can override specific tags while inheriting others
+- **Smart Categorization**: Tags are automatically categorized into Priority, Severity, Type, and Custom tags
+
+### Examples
+
+**Basic Inheritance**
+```gherkin
+@P1 @S2 @WEB @Smoke
+Feature: Login Module
+  # All scenarios inherit: P1 priority, S2 severity, WEB type, Smoke tag
+
+  Scenario: Successful login
+    Given the user is on the login page
+    When the user enters valid credentials
+    Then the dashboard should be displayed
+    # Result: Priority=P1, Severity=S2, Type=WEB, TAG_1=Smoke
+```
+
+**Partial Override**
+```gherkin
+@P1 @S2 @WEB @Smoke
+Feature: Login Module
+
+  @P0 @Regression  # Overrides priority to P0, adds Regression tag
+  Scenario: Critical login test
+    Given the system is under heavy load
+    When the user attempts to login
+    Then the login should still succeed
+    # Result: Priority=P0 (overridden), Severity=S2 (inherited)
+    #         Type=WEB (inherited), TAG_1=Regression, TAG_2=P0
+```
+
+**Type Override Only**
+```gherkin
+@P1 @S2 @WEB @Smoke
+Feature: Login Module
+
+  @API  # Only overrides the type
+  Scenario: API login test
+    Given the API endpoint is available
+    When a POST request is sent
+    Then the response should be 200
+    # Result: Priority=P1 (inherited), Severity=S2 (inherited)
+    #         Type=API (overridden), TAG_1=Smoke (inherited)
+```
+
+### Supported Tag Categories
+
+**Priority Tags**: P0, P1, P2, P3, HIGH, MEDIUM, LOW
+**Severity Tags**: S1, S2, S3, S4, CRITICAL, MAJOR, MODERATE, LOW  
+**Type Tags**: API, WEB, MOBILE, UI, BACKEND
+**Custom Tags**: Any other tags become TAG_1, TAG_2, etc.
+
+### Configuration
+Customize tag categories in `mawiport.config.json`:
+```json
+{
+  "tagRouting": {
+    "typeKeywords": ["API", "WEB", "MOBILE", "UI", "BACKEND"],
+    "priorityKeywords": ["P0", "P1", "P2", "P3", "HIGH", "MEDIUM", "LOW"],
+    "severityKeywords": ["S1", "S2", "S3", "S4", "CRITICAL", "MAJOR", "MODERATE", "LOW"]
+  }
+}
 ```
 
 ## 🛠️ Troubleshooting & FAQ

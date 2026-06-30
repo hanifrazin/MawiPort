@@ -1,6 +1,7 @@
 package com.mawiport.core.model;
 
 import com.mawiport.core.annotation.GherkinMap;
+import java.util.*;
 
 public class TestCaseRecord {
     @GherkinMap(sourceKey = "TC_ID", order = 0, headerName = "Test Case ID", optional = false)
@@ -48,17 +49,13 @@ public class TestCaseRecord {
     @GherkinMap(sourceKey = "TAG_VALID", order = 14, headerName = "Valid of Testing", optional = false)
     private String validTest;
 
-    @GherkinMap(sourceKey = "TAG_1", order = 15, headerName = "Additional Tag 1", optional = false)
-    private String additionalTag1;
 
-    @GherkinMap(sourceKey = "TAG_2", order = 16, headerName = "Additional Tag 2", optional = false)
-    private String additionalTag2;
 
     // Constructors, getters, and setters
     public TestCaseRecord() {
     }
 
-    public TestCaseRecord(String testCaseId, String description, String precondition, String testSteps, String testData, String expectedResult, String actualResult, String priority, String severity, String platformTest, String envTest, String typeTest, String phaseTest, String executeTest, String validTest, String additionalTag1, String additionalTag2) {
+    public TestCaseRecord(String testCaseId, String description, String precondition, String testSteps, String testData, String expectedResult, String actualResult, String priority, String severity, String platformTest, String envTest, String typeTest, String phaseTest, String executeTest, String validTest) {
         this.testCaseId = testCaseId;
         this.description = description;
         this.precondition = precondition;
@@ -74,8 +71,6 @@ public class TestCaseRecord {
         this.phaseTest = phaseTest;
         this.executeTest = executeTest;
         this.validTest = validTest;
-        this.additionalTag1 = additionalTag1;
-        this.additionalTag2 = additionalTag2;
     }
 
     // Getters and setters
@@ -199,19 +194,5 @@ public class TestCaseRecord {
         this.validTest = validTest;
     }
 
-    public String getAdditionalTag1() {
-        return additionalTag1;
-    }
-
-    public void setAdditionalTag1(String additionalTag1) {
-        this.additionalTag1 = additionalTag1;
-    }
-
-    public String getAdditionalTag2() {
-        return additionalTag2;
-    }
-
-    public void setAdditionalTag2(String additionalTag2) {
-        this.additionalTag2 = additionalTag2;
-    }
+    // No more static additional tag getters/setters - using dynamic approach now
 }

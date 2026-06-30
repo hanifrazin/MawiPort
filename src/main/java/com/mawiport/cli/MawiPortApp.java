@@ -2,6 +2,9 @@ package com.mawiport.cli;
 
 import com.mawiport.adapter.input.GherkinAstAdapter;
 import com.mawiport.adapter.output.ApachePoiExcelAdapter;
+import com.mawiport.adapter.output.DynamicExcelExporter;
+import com.mawiport.config.AppConfig;
+import com.mawiport.config.ConfigLoader;
 import com.mawiport.core.engine.ReflectionMapper;
 import com.mawiport.core.model.TestCaseRecord;
 import java.io.IOException;
@@ -27,6 +30,8 @@ public class MawiPortApp implements Callable<Integer> {
     @Option(names = {"-o", "--output"}, description = "Path for the output .xlsx file", required = true)
     private Path outputPath;
 
+    private AppConfig config;
+
     @Override
     public Integer call() throws Exception {
         System.out.println("🥒 MawiPort Engine Starting...");
@@ -36,7 +41,7 @@ public class MawiPortApp implements Callable<Integer> {
             System.err.println("Error: Input file does not exist: " + inputPath.toAbsolutePath());
             return 1;
         }
-        
+
         // Validate input file exists
         if (!Files.exists(inputPath)) {
             System.err.println("Error: Input file does not exist: " + inputPath.toAbsolutePath());
@@ -48,7 +53,7 @@ public class MawiPortApp implements Callable<Integer> {
             System.err.println("Error: Output directory does not exist: " + outputPath.getParent());
             return 1;
         }
-        
+
         // Debug: Print path information
         System.out.println("DEBUG: Input path: " + inputPath);
         System.out.println("DEBUG: Output path: " + outputPath);
@@ -57,9 +62,12 @@ public class MawiPortApp implements Callable<Integer> {
 
         try {
             // 1. Initialize Components
-            GherkinAstAdapter reader = new GherkinAstAdapter();
+            ConfigLoader configLoader = new ConfigLoader();
+            this.config = configLoader.load();
+            
+            GherkinAstAdapter reader = new GherkinAstAdapter(config);
             ReflectionMapper mapper = new ReflectionMapper(TestCaseRecord.class);
-            ApachePoiExcelAdapter exporter = new ApachePoiExcelAdapter();
+            DynamicExcelExporter exporter = new DynamicExcelExporter(config);
 
             // 2. Read & Flatten (Adapter Input)
             System.out.println("📖 Parsing AST from: " + inputPath.toAbsolutePath());
@@ -96,4 +104,6 @@ public class MawiPortApp implements Callable<Integer> {
         int exitCode = new CommandLine(new MawiPortApp()).execute(args);
         System.exit(exitCode);
     }
+
+
 }

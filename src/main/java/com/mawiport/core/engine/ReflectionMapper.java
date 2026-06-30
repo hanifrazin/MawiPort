@@ -53,7 +53,12 @@ public class ReflectionMapper {
             if (data.containsKey(sourceKey)) {
                 Object value = data.get(sourceKey);
                 if (value != null) {
-                    field.set(target, value.toString()); // Convert to String to be safe
+                    // Handle Map types specially
+                    if (Map.class.isAssignableFrom(field.getType())) {
+                        field.set(target, value); // Set Map directly without toString()
+                    } else {
+                        field.set(target, value.toString()); // Convert to String for other types
+                    }
                 }
             }
         }
